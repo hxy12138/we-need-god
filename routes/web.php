@@ -11,7 +11,7 @@
 |
 */
 
-
+//5255
 // 小米模版
  Route::get('/', 'IndexController@showIndex');
  Route::get('/index', 'IndexController@showIndex');
