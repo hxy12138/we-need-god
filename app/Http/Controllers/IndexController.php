@@ -16,4 +16,12 @@ class IndexController extends Controller
 	{
 		return view('index.index');
 	}
+
+	/*
+	* 用于测试
+	*/
+	public function test()
+	{
+		return;
+	} 
 }
