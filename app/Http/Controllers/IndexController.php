@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Input;
+use App\Services\UserService;
 
 class IndexController extends Controller
 {
@@ -22,6 +23,8 @@ class IndexController extends Controller
 	*/
 	public function test()
 	{
-		return;
-	} 
+		$service = new UserService();
+		$res = $service->Rev(1.23);
+		return $res;
+	}
 }

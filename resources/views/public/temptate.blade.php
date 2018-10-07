@@ -38,9 +38,9 @@
 					<div class="gouwuche fr"><a href="">购物车</a></div>
 					<div class="fr">
 						<ul>
-							<li><a href="/mi_login" target="_blank">登录</a></li>
+							<li><a href="{{URL::asset('/login') }}" target="_blank">登录</a></li>
 							<li>|</li>
-							<li><a href="/mi_register" target="_blank" >注册</a></li>
+							<li><a href="{{URL::asset('/register') }}" target="_blank" >注册</a></li>
 							<li>|</li>
 							<li><a href="">消息通知</a></li>
 						</ul>
