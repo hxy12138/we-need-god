@@ -55,6 +55,10 @@ class User extends Model
             'login_address' =>  "{$city['region']} {$city['city']}",
             'login_action'  =>  $loginAction
         ]);
-        
+        $arr = Db::table('app_login_log')->where('u_id', $id)->get()->toArray();
+        return $arr;
+        if (count($arr)>10) {
+            DB::table('app_login_log')->where('l_id', '=', $arr[0]['l_id'])->delete();
+        }
     }
 }
