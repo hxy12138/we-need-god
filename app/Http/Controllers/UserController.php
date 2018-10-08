@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
+use App\Services\UserService;
 
 class UserController extends Controller
 {
@@ -19,6 +18,26 @@ class UserController extends Controller
 	}
 
 	/*
+	* 接收处理用户登录页面
+	*/ 
+	public function doUserLogin(Request $request)
+	{
+ 		if ($request->isMethod('post')){
+			$arr = Input::post();
+			//dd($arr);
+			// $ss = UserService::LogonJudgement($arr);
+			// dd($ss);
+			if (!(UserService::LogonJudgement($arr)==[])) {
+				return redirect("/prompt")->with(['message'=>'登录成功！','url' =>'/', 'jumpTime'=>5,'status'=>'success']);
+			}else{
+				return redirect("/prompt")->with(['message'=>'登录失败！','url' =>'/login', 'jumpTime'=>5,'status'=>'error']);
+			}
+        }else{
+        	return 'Incorrect!';
+        }
+	}
+
+	/*
 	* 用户注册展示
 	*/ 
 	public function showUserRegister()
@@ -27,19 +46,26 @@ class UserController extends Controller
 	}
 
 	/*
-	* 接收注册信息
+	* 接收处理注册信息
 	*/
-	public function doUserRegister()
+	public function doUserRegister(Request $request)
 	{
-		dd(input::post());
-		$stat = input::post('mail');
-		if ($stat==NULL) {
-			$tel = input::post('tel');
-		}else{
-			
-		}
-			$password = input::post('password');
-			$repassword = input::post('repassword');
+		if ($request->isMethod('post')){
+			$arr = Input::post();
+			$res = UserService::RegistrationVerification($arr);
+			if (is_string($res)) {
+				return redirect("/prompt")->with(['message'=>$res,'url' =>'/', 'jumpTime'=>3,'status'=>'error']);
+;
+			}else{
+				if ($res) {
+					return redirect("/prompt")->with(['message'=>'ok','url' =>'/', 'jumpTime'=>3,'status'=>'success']);
+				}else{
+					return redirect("/prompt")->with(['message'=>'ok','url' =>'/', 'jumpTime'=>3,'status'=>'error']);
+				}
+			}
+        }else{
+        	return 'Incorrect!';
+        }
 	}
 	/*
 	* 展示用户个人信息
