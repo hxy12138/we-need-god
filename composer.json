@@ -7,9 +7,12 @@
     "require": {
         "php": ">=7.0.0",
         "fideloper/proxy": "~3.3",
+        "guzzlehttp/guzzle": "^6.3",
+        "hisorange/browser-detect": "^3.1",
         "laravel/framework": "5.5.*",
         "laravel/tinker": "~1.0",
-        "mews/captcha": "^2.2"
+        "mews/captcha": "^2.2",
+        "zhuzhichao/ip-location-zh": "^2.4"
     },
     "require-dev": {
         "filp/whoops": "~2.0",

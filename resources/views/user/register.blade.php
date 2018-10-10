@@ -20,7 +20,7 @@
 					<div class="xian center"></div>
 				</div>
 				<div class="regist_main center">
-					<div class="username">手&nbsp;&nbsp;机&nbsp;&nbsp;号:&nbsp;&nbsp;<input class="shurukuang" type="text" name="tel" placeholder="请填写正确的手机号" id="tel" /><span></span></div>
+					<div class="username">手&nbsp;&nbsp;机&nbsp;&nbsp;号:&nbsp;&nbsp;<input class="shurukuang" type="tel" onkeyup="value=value.replace(/[^\d]/g,'')" name="tel" placeholder="请填写正确的手机号" id="tel" /><span></span></div>
 					<div class="username">密&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码:&nbsp;&nbsp;<input class="shurukuang" type="password" name="password" placeholder="请输入你的密码"/><span>请输入6位以上12位以下字符</span></div>
 					
 					<div class="username">确认密码:&nbsp;&nbsp;<input class="shurukuang" type="password" name="repassword" placeholder="请确认你的密码"/><span>两次密码要输入一致哦</span></div>
@@ -48,7 +48,7 @@
 				$('.regist_main > div:first').html("邮&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;箱:&nbsp;&nbsp;<input class='shurukuang' type='text' name='mail' placeholder='请填写正确的邮箱' id='mail'/><span>请填写正确的邮箱</span>");
 				$(this).text('手机号注册');
 			}else{
-				$('.regist_main > div:first').html("手&nbsp;&nbsp;机&nbsp;&nbsp;号:&nbsp;&nbsp;<input class='shurukuang' type='text' name='tel' placeholder='请填写正确的手机号' id='tel'/><span></span>");
+				$('.regist_main > div:first').html("手&nbsp;&nbsp;机&nbsp;&nbsp;号:&nbsp;&nbsp;<input class='shurukuang' type='tel' name='tel' onkeyup=\"value=value.replace(/[^\\d]/g,'')\" placeholder='请填写正确的手机号' id='tel'/><span></span>");
 				$(this).text('邮箱注册');
 			}
 		});

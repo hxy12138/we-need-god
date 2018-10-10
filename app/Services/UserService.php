@@ -2,81 +2,119 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Validator;//////
-use App\User;
+use Illuminate\Support\Facades\Validator;
+use Zhuzhichao\IpLocationZh\Ip;
+use App\Models\AppUser;
+use App\Models\AppLoginLog;
+// use BrowserDetect; //判断是啥客户端
 
 class UserService
 {
+
 	/*
 	* 注册验证
 	*/ 
-	static public function RegistrationVerification($arr)
+	public static function registrVerification($arr)
 	{
-		$rules = ['captcha' => 'required|captcha'];
-		$messages = [
-			'cpt.required' => '请输入验证码',
- 			'cpt.captcha' => '验证码错误，请重试'
+		$ismobileoremail = [
+			'rules'=>[
+				'tel' => [
+						'required',
+						'regex:/^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/'
+					]
+				],
+			'messages'=>[
+				'tel' =>[
+					'required' => '请输入手机号','regex' => '请输入正确手机号','required' => '请输入手机号'
+				]
+			]
 		];
-		$validator = Validator::make(['captcha'=>$arr['captcha']], $rules,$messages);
-		if ($validator->fails()){
-			return 'captcha error';
+		if (isset($arr['mail'])){
+			unset($ismobileoremail);
+			$ismobileoremail = [
+				'rules'=>[
+					'mail' => 'required|email'
+				],
+				'messages'=>[
+					'mail'=>['required' => '邮箱不得为空','email' => '请输入正确邮箱']
+				]
+			];
 		}
-
+		$rules = [
+			'captcha' => 'required|captcha',
+			$ismobileoremail['rules'],
+			'password' => 'required|between:6,12',
+			'repassword' => 'required|same:password',
+		];
+		$messages = [
+			'captcha.required' => '请输入验证码',
+ 			'captcha.captcha' => '验证码错误，请重试',
+ 			$ismobileoremail['messages'],
+ 			'password.required' => '密码不得为空',
+ 			'password.between' => '密码请输入6位以上12位以下字符',
+ 			'repassword.required' => '确认密码不得为空',
+ 			'repassword.same' => '两次密码不一致',
+		];
+		$validator = Validator::make($arr, $rules,$messages);
 		$data['u_name']='u_'.md5(time().rand(1,999999));
-		if (isset($arr['tel'])) {
-			if (empty($arr['tel'])) {
-				return 'tel NULL';
+		if ($validator->fails()){
+			$errors = $validator->errors();
+			if ($errors->has('captcha')) {
+				return $errors->first('captcha');
 			}
-			$usermsg = '/^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/';
-			if (!preg_match($usermsg,$arr['tel'])) {
-				return 'tel error!';
+			if (isset($arr['tel'])&&$errors->has('tel')) {
+				return $errors->first('tel');
 			}
-			$data['u_tel']=$arr['tel'];
-		}elseif(isset($arr['mail'])){
-			if (empty($arr['mail'])) {
-				return 'mail NULL';
+			if (isset($arr['mail'])&&$errors->has('mail')) {
+				return $errors->first('mail');
 			}
-			$usermsg = '/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/';
-			if (!preg_match($usermsg,$arr['mail'])) {
-				return 'mail error!';
+			if ($errors->has('password')) {
+				return $errors->first('password');
 			}
-			$data['u_mail']=$arr['mail'];
-		}else{
-			return '不得为空';
+			if ($errors->has('repassword')) {
+				return $errors->first('repassword');
+			}
+			return json_encode($errors->all());
 		}
-		if($arr['password']==NULL){
-			return 'password NULL';
-		}else{
-			$pattern="/^[\w-\.]{6,12}$/";
-			if (!preg_match($pattern,$arr['password'])) {
-				return 'password error';
-			}elseif($arr['password']!=$arr['repassword']){
-				return '两次密码不一致';
-			}
-			$data['u_pwd']=md5($arr['password']);
-		}
-		$data['u_addtime']=time();
-		$res = User::InsertOneMsg($data);
-		return $res;
+		$data['u_tel'] = isset($arr['tel'])?$arr['tel']:NULL;
+		$data['u_mail'] = isset($arr['mail'])?$arr['mail']:NULL;
+		$data['u_pwd'] = md5($arr['password']);
+		$data['u_addtime'] = time();
+		$result = AppUser::add($data);
+		
+		return $result;
 	}
 
 	/*
 	*	判断登陆
 	*/
-	static public function LogonJudgement($arr)
+	public static function logonJudgement($arr)
 	{
-		$res = User::getUserOne($arr);
-		if ($res) {
-			$ip = self::getip();
-			User::upLastLoginTime($res[0]->u_id,$ip,self::getCity($ip),self::loginAction());
+		$result = AppUser::getUserOneForLogin($arr);
+		if ($result) {
+			$ip = self::getIp();
+			$id = $result[0]->u_id;
+			AppUser::upLastLoginTime($id);
+			$getcity = self::getCity($ip);
+			AppLoginLog::add([
+				'u_id' => $result[0]->u_id,
+				'login_time' => time(),
+				'login_ip' => $ip,
+				'login_address' => "{$getcity[0]} {$getcity[1]} {$getcity[2]}",
+				'login_action' => self::loginAction()
+			]);
+			$data = AppLoginLog::getDataAce($id);
+			if (count($data)>10) {
+				AppLoginLog::deleteOne($data[0]->l_id);
+			}
 		}
-		return $res;
+		return $result;
 	}
 
     /*
     * 获取ip
     */
-    static private function getip()
+    private static function getIp()
     {
     	if (isset($_SERVER["HTTP_X_FORWARDED_FOR"]))
 		{
@@ -104,7 +142,7 @@ class UserService
 		}
 		else
 		{
-			$ip = "Unknown";
+			$ip = 'Unknown';
 		}
 		return $ip;
     }
@@ -112,44 +150,35 @@ class UserService
     /*
     *获取地区
     */
-    static private function getCity($ip = "Unknown")
+    private static function getCity($ip = 'Unknown')
 	{
-		if($ip == "Unknown"){
-			$url = "http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=json";//新浪借口获取访问者地区
-			$ip=json_decode(file_get_contents($url),true);
-			$data = $ip;
-		}else{
-			$url="http://ip.taobao.com/service/getIpInfo.php?ip=".$ip;//淘宝借口需要填写ip
-			$ip=json_decode(file_get_contents($url));
-			if((string)$ip->code=='1'){
-				return "Unknown";
-			}
-			$data = (array)$ip->data;
+		if ($ip == 'Unknown') {
+			return 'Unknown';
 		}
-		
-		return $data;
+		return Ip::find($ip);
 	}
 
-	/*
-	* 登录方式 1:pc,2:小程序,3:手机
+	/** 
+	* 登录方式
 	*/
-	static private function loginAction()
+	private static function loginAction()
 	{
 		if (self::isMobile()) {
-			return 3;
+			return 'mobile';
 		}
 
 		if (self::isWeixin()) {
-			return 2;
+			return 'weixin';
 		}
 
-		return 1;
+		return 'pc';
 	}
 
 	/*
 	*判断是否是手机登录
 	*/
-	static private function isMobile() {
+	private static function isMobile()
+	{
 		// 如果有HTTP_X_WAP_PROFILE则一定是移动设备
 		if (isset($_SERVER['HTTP_X_WAP_PROFILE'])) {
 			return true;
@@ -179,9 +208,10 @@ class UserService
 	}
 
 	/*
-	* 判断是否是微信
+	* 判断是否是微信自带浏览器
 	*/
-	static private function isWeixin() {
+	private static function isWeixin()
+	{
 		if (strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') !== false) {
 			return true;
 		}
