@@ -41,4 +41,12 @@ class AppUser extends Model
         $time = time();
         return DB::table('app_user')->where('u_id', $id)->update(['u_lastlogintime' => $time]);
     }
+
+    /**
+     * 获取用户信息
+     */
+    static function getUserInfo($id)
+    {
+    	return DB::table('app_user')->where('u_id', $id)->select('u_id','u_name','u_tel','u_mail')->first();
+    }
 }

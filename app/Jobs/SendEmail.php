@@ -28,10 +28,10 @@ class SendEmail implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle($text)
     {
         $user = $this->user;
-        Mail::raw('我的网站因为你的注册变得不同',function ($message){
+        Mail::raw($text,function ($message){
             // 发送人 (开发者的网站和名称)
             $message->from('823655190@qq.com','橘猫');
             // 收件人的邮箱地址

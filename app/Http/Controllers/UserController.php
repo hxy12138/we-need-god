@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Input;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Services\UserService;
-use App\Jobs\SendEmail;
 
 class UserController extends Controller
 {
@@ -25,14 +24,15 @@ class UserController extends Controller
 	{
  		if ($request->isMethod('post')){
 			$arr = Input::post();
-			//dd($arr);
-			// $ss = UserService::logonJudgement($arr);
-			// dd($ss);
-			if (!(UserService::logonJudgement($arr)==[])) {
-				return redirect("/prompt")->with(['message'=>'登录成功！','url' =>'/', 'jumpTime'=>5,'status'=>'success']);
+			$result = UserService::logonJudgement($arr);
+			if ($result==[]) {
+				return redirect("/prompt")->with(['message'=>'登录失败！','url' =>'/login', 'jumpTime'=>5,'status'=>'error']);
 			}
-			
-			return redirect("/prompt")->with(['message'=>'登录失败！','url' =>'/login', 'jumpTime'=>5,'status'=>'error']);
+			if (is_string($result)) {
+				return redirect("/prompt")->with(['message'=>$result,'url' =>'/login', 'jumpTime'=>5,'status'=>'error']);
+			}
+			UserService::saveUserLandingStatus($result[0]->u_id);
+			return redirect("/prompt")->with(['message'=>'登录成功！','url' =>'/index', 'jumpTime'=>5,'status'=>'success']);
         }
         
         return 'Incorrect!';
@@ -58,24 +58,13 @@ class UserController extends Controller
 				return redirect("/prompt")->with(['message'=>$result,'url' =>'/register', 'jumpTime'=>3,'status'=>'error']);
 			}
 			if ($result) {
-				if (isset($arr['mail'])) {
-					$this->queueSendEmail($arr['mail']);
-				}
-				return redirect("/prompt")->with(['message'=>'ok','url' =>'/', 'jumpTime'=>3,'status'=>'success']);
+				return redirect("/prompt")->with(['message'=>'ok','url' =>'/login', 'jumpTime'=>3,'status'=>'success']);
 			}
 
 			return redirect("/prompt")->with(['message'=>'失败','url' =>'/register', 'jumpTime'=>3,'status'=>'error']);
         }
 
         return 'Incorrect!';
-	}
-
-	/**
-	 * 队列发送邮件
-	 */
-	public function queueSendEmail($email)
-	{
-		$this->dispatch(new SendEmail($email));
 	}
 
 	/*

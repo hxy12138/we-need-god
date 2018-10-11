@@ -29,7 +29,7 @@
 					<div class="username">密&nbsp;&nbsp;&nbsp;&nbsp;码:&nbsp;<input class="shurukuang" type="password" name="password" placeholder="请输入你的密码"/></div>
 					<div class="username">
 						<div class="left fl">验证码:&nbsp;<input class="yanzhengma" type="text" name="captcha" placeholder="请输入验证码"/></div>
-						<div class="right fl"><img src="{{captcha_src()}}" style="cursor: pointer" onclick="this.src='{{captcha_src()}}'+Math.random()"></div>
+						<div class="right fl"><img src="{{captcha_src()}}" style="cursor: pointer" onclick="this.src='http://www.phpsp.com/captcha/default?'+Math.random()"></div>
 						<div class="clear"></div>
 					</div>
 				</div>

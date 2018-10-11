@@ -3,9 +3,12 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Validator;
-use Zhuzhichao\IpLocationZh\Ip;
+use Illuminate\Support\Facades\Cookie;
+use Illuminate\Http\Request;
 use App\Models\AppUser;
+use App\Jobs\SendEmail;
 use App\Models\AppLoginLog;
+use Zhuzhichao\IpLocationZh\Ip;
 // use BrowserDetect; //判断是啥客户端
 
 class UserService
@@ -16,40 +19,30 @@ class UserService
 	*/ 
 	public static function registrVerification($arr)
 	{
-		$ismobileoremail = [
-			'rules'=>[
-				'tel' => [
-						'required',
-						'regex:/^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/'
-					]
-				],
-			'messages'=>[
-				'tel' =>[
-					'required' => '请输入手机号','regex' => '请输入正确手机号','required' => '请输入手机号'
-				]
-			]
-		];
-		if (isset($arr['mail'])){
-			unset($ismobileoremail);
-			$ismobileoremail = [
-				'rules'=>[
-					'mail' => 'required|email'
-				],
-				'messages'=>[
-					'mail'=>['required' => '邮箱不得为空','email' => '请输入正确邮箱']
-				]
-			];
-		}
 		$rules = [
 			'captcha' => 'required|captcha',
-			$ismobileoremail['rules'],
+			'tel' => [
+						'required_without:mail',
+						'unique:app_user,u_tel',
+						'regex:/^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/'
+					],
+			'mail' => 'required_without:tel|email|unique:app_user,u_mail',
 			'password' => 'required|between:6,12',
 			'repassword' => 'required|same:password',
 		];
 		$messages = [
 			'captcha.required' => '请输入验证码',
  			'captcha.captcha' => '验证码错误，请重试',
- 			$ismobileoremail['messages'],
+ 			'tel' =>[
+				'required_without' => '请输入手机号',
+				'regex' => '请输入正确手机号',
+			],
+			'tel.unique' => '此手机号已被注册',
+			'mail'=>[
+				'required_without' => '邮箱不得为空',
+				'email' => '请输入正确邮箱',
+			],
+			'mail.unique' => '此邮箱已被注册',
  			'password.required' => '密码不得为空',
  			'password.between' => '密码请输入6位以上12位以下字符',
  			'repassword.required' => '确认密码不得为空',
@@ -81,7 +74,9 @@ class UserService
 		$data['u_pwd'] = md5($arr['password']);
 		$data['u_addtime'] = time();
 		$result = AppUser::add($data);
-		
+		if ($result&&isset($arr['mail'])) {
+			self::sendEmail($arr['mail']);
+		}
 		return $result;
 	}
 
@@ -90,6 +85,19 @@ class UserService
 	*/
 	public static function logonJudgement($arr)
 	{
+		$rules = ['captcha' => 'required|captcha'];
+		$messages = [
+			'captcha.required' => '请输入验证码',
+ 			'captcha.captcha' => '验证码错误，请重试'
+ 		];
+ 		$validator = Validator::make(['captcha'=>$arr['captcha']], $rules,$messages);
+ 		if ($validator->fails()){
+			$errors = $validator->errors();
+			return $errors->all();
+			if ($errors->has('captcha')) {
+				return $errors->first('captcha');
+			}
+		}
 		$result = AppUser::getUserOneForLogin($arr);
 		if ($result) {
 			$ip = self::getIp();
@@ -109,6 +117,28 @@ class UserService
 			}
 		}
 		return $result;
+	}
+
+	/**
+	 * 保存登陆状态
+	 */
+	public static function saveUserLandingStatus($userid)
+	{
+		$key = md5(time().rand(1,99999).rand(1,99999));
+		$userinfo = AppUser::getUserInfo($userid);
+		//dd($userinfo);
+		session([$key=>$userinfo]);
+		Cookie::queue('userinfo',$key,86400);
+		return response('token', 200)->header('Content-Type', 'text/plain');
+	}
+
+	/**
+	 * 发送邮件
+	 */
+	public static function sendEmail($email)
+	{
+		$sendEmail = new SendEmail($email);
+		$sendEmail->handle('我的网站因为你的注册变得不同');
 	}
 
     /*
