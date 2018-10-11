@@ -35,13 +35,18 @@
 					</ul>
 				</div>
 				<div class="right fr">
-					<div class="gouwuche fr"><a href="">购物车</a></div>
+					<div class="gouwuche fr"><a href="{{URL::asset('/carte') }}">购物车</a></div>
 					<div class="fr">
 						<ul>
-							<li><a href="/mi_login" target="_blank">登录</a></li>
+							@if (!(isset($userinfo)))
+							<li><a href="{{URL::asset('/login') }}">登录</a></li>
 							<li>|</li>
-							<li><a href="/mi_register" target="_blank" >注册</a></li>
+							<li><a href="{{URL::asset('/register') }}">注册</a></li>
 							<li>|</li>
+							@else
+							<li><a href="{{URL::asset('/self_info') }}">个人中心</a></li>
+							<li>|</li>
+							@endif
 							<li><a href="">消息通知</a></li>
 						</ul>
 					</div>
@@ -57,7 +62,7 @@
 			<a href=""><div class="ad_top fl"></div></a>
 			<div class="nav fl">
 				<ul>
-					<li><a href="/liebiao" target="_blank">小米手机</a></li>
+					<li><a href="/goodsList" target="_blank">小米手机</a></li>
 					<li><a href="">红米</a></li>
 					<li><a href="">平板·笔记本</a></li>
 					<li><a href="">电视</a></li>
