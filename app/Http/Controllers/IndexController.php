@@ -14,20 +14,8 @@ class IndexController extends Controller
 	public function showIndex()
 	{
 		$userinfo = IndexService::getSessionByCookie('userinfo');
-		$sessionId = IndexService::getCookie('userinfo');
-		//dump(IndexService::getCookie('userinfo'));
-		$data = (array)$userinfo;
-		//var_dump($data["\0*\0attributes"][$sessionId]);
-		return view('index.index',['userinfo'=>$data["\0*\0attributes"][$sessionId]]);
-	}
-
-	/*
-	* 用于测试
-	*/
-	public function test()
-	{
-		$service = new UserService();
-		$res = $service->Rev(1.23);
-		return $res;
+		$category = IndexService::getCategory();
+		dump($category);
+		return view('index.index',['userinfo'=>$userinfo,'category'=>$category]);
 	}
 }

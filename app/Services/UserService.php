@@ -9,6 +9,7 @@ use App\Models\AppUser;
 use App\Jobs\SendEmail;
 use App\Models\AppLoginLog;
 use Zhuzhichao\IpLocationZh\Ip;
+//use DispatchesJobs;
 // use BrowserDetect; //判断是啥客户端
 
 class UserService
@@ -49,7 +50,7 @@ class UserService
  			'repassword.same' => '两次密码不一致',
 		];
 		$validator = Validator::make($arr, $rules,$messages);
-		$data['u_name']='u_'.md5(time().rand(1,999999));
+		$data['u_name']='u_'.date('m_d_i_s',time()).rand(1,99);
 		if ($validator->fails()){
 			$errors = $validator->errors();
 			if ($errors->has('captcha')) {
@@ -74,8 +75,11 @@ class UserService
 		$data['u_pwd'] = md5($arr['password']);
 		$data['u_addtime'] = time();
 		$result = AppUser::add($data);
-		if ($result&&isset($arr['mail'])) {
-			self::sendEmail($arr['mail']);
+		if ($result) {
+			if (isset($arr['mail'])) {
+				self::sendEmail($arr['mail'],'橘猫欢迎您注册');
+			}
+			self::saveUserLandingStatus(AppUser::getLastInsertId());
 		}
 		return $result;
 	}
@@ -133,12 +137,23 @@ class UserService
 	}
 
 	/**
+	 * 删除登陆状态
+	 */
+	public static function delUserLandingStatus()
+	{
+		
+		Cookie::queue('userinfo',NULL,-1);
+		
+		return response('token', 200)->header('Content-Type', 'text/plain');
+	}
+
+	/**
 	 * 发送邮件
 	 */
-	public static function sendEmail($email)
+	public static function sendEmail($email,$message)
 	{
-		$sendEmail = new SendEmail($email);
-		$sendEmail->handle('我的网站因为你的注册变得不同');
+		$sendEmail = new SendEmail(['email'=>$email,'message'=>$message]);
+		dispatch($sendEmail);
 	}
 
     /*

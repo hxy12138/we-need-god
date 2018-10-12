@@ -7,7 +7,7 @@ use DB;
 
 class AppUser extends Model
 {
-	 protected $table = 'app_user';
+	protected $table = 'app_user';
     static function getOne($id)
     {
         $row = DB::table('su')->where('id', $id)->first();
@@ -47,6 +47,14 @@ class AppUser extends Model
      */
     static function getUserInfo($id)
     {
-    	return DB::table('app_user')->where('u_id', $id)->select('u_id','u_name','u_tel','u_mail')->first();
+        return DB::table('app_user')->where('u_id', $id)->select('u_id','u_name','u_tel','u_mail')->first();
+    }
+
+    /**
+     * 获取上一次添加ID
+     */
+    static function getLastInsertId()
+    {
+        return DB::getPdo()->lastInsertId();
     }
 }

@@ -46,6 +46,8 @@
 							@else
 							<li><a href="{{URL::asset('/self_info') }}">个人中心</a></li>
 							<li>|</li>
+							<li><a href="{{URL::asset('/loginout') }}">退出登陆</a></li>
+							<li>|</li>
 							@endif
 							<li><a href="">消息通知</a></li>
 						</ul>

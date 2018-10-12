@@ -12,15 +12,15 @@ use Illuminate\Support\Facades\Mail;
 class SendEmail implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    protected $user;
+    protected $message;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($user)
+    public function __construct($message)
     {
-        $this->user = $user;
+        $this->message = $message;
     }
 
     /**
@@ -28,14 +28,13 @@ class SendEmail implements ShouldQueue
      *
      * @return void
      */
-    public function handle($text)
+    public function handle()
     {
-        $user = $this->user;
-        Mail::raw($text,function ($message){
+        Mail::raw($this->message['message'],function ($message){
             // 发送人 (开发者的网站和名称)
             $message->from('823655190@qq.com','橘猫');
             // 收件人的邮箱地址
-            $message->to($this->user);
+            $message->to($this->message['email']);
             // 邮件主题
             $message->subject('橘猫发的邮件');
         });
