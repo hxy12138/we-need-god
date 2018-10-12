@@ -17,6 +17,7 @@
  Route::get('/', 'IndexController@showIndex');
  Route::get('/index', 'IndexController@showIndex');
  Route::get('/login', 'UserController@showUserLogin');
+ Route::get('/loginout', 'UserController@userLoginOut');
  Route::post('/dologin', 'UserController@doUserLogin');
  Route::get('/self_info', 'UserController@showUserInfo');
  Route::get('/register', 'UserController@showUserRegister');
