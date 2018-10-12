@@ -15,22 +15,22 @@
 						@if(isset($category[$i]['son']))
 							@foreach($category[$i]['son'] as $k => $v)
 						<a href="">{{ $v['cat_name'] }}</a>
-							@endforeach
-						@endif
 						<div class="pop">
 							<div class="left fl">
 								<!--分类下循环left一列最多6个（开始）-->
+								@foreach($v['son'] as $ke => $va)
 								<div>
 									<div class="xuangou_left fl">
 										<a href="">
-											<div class="img fl"><img src="{{URL::asset('image/xm6_80.png') }}" alt=""></div>
-											<span class="fl">小米6</span>
+											<div class="img fl"><img src="{{URL::asset($va['cat_img']) }}" alt=""></div>
+											<span class="fl">{{ $va['cat_name'] }}</span>
 											<div class="clear"></div>
 										</a>
 									</div>
 									<div class="xuangou_right fr"><a href="/details" target="_blank">选购</a></div>
 									<div class="clear"></div>
 								</div>
+								@endforeach
 								<!--分类下循环left一列最多6个（结束）-->
 							</div>
 							<div class="ctn fl">
@@ -65,6 +65,8 @@
 							</div>
 							<div class="clear"></div>
 						</div>
+							@endforeach
+						@endif
 					</li>
 					@endfor
 				</ul>
