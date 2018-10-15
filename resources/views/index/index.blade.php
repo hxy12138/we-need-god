@@ -10,27 +10,30 @@
 		<!-- 循环分类展示结束 -->
 			<div class="nav">				
 				<ul>
-					@for($i = 1; $i <= count($category);$i++)
+					@foreach($category as $one)
 					<li>
-						@if(isset($category[$i]['son']))
-							@foreach($category[$i]['son'] as $k => $v)
+						@if(isset($one['son']))
+							@foreach($one['son'] as $v)
 						<a href="">{{ $v['cat_name'] }}</a>
 							@endforeach
-						@endif
 						<div class="pop">
 							<div class="left fl">
 								<!--分类下循环left一列最多6个（开始）-->
+								@foreach($one['son'] as $va)
+									@foreach($va['son'] as $value)
 								<div>
 									<div class="xuangou_left fl">
 										<a href="">
-											<div class="img fl"><img src="{{URL::asset('image/xm6_80.png') }}" alt=""></div>
-											<span class="fl">小米6</span>
+											<div class="img fl"><img src="{{ URL::asset($value['cat_img']) }}" alt=""></div>
+											<span class="fl">{{ $value['cat_name'] }}</span>
 											<div class="clear"></div>
 										</a>
 									</div>
 									<div class="xuangou_right fr"><a href="/details" target="_blank">选购</a></div>
 									<div class="clear"></div>
 								</div>
+									@endforeach
+								@endforeach
 								<!--分类下循环left一列最多6个（结束）-->
 							</div>
 							<div class="ctn fl">
@@ -65,8 +68,9 @@
 							</div>
 							<div class="clear"></div>
 						</div>
+						@endif
 					</li>
-					@endfor
+					@endforeach
 				</ul>
 			</div>
 		<!-- 循环分类展示结束 -->

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Redis;
 use Zhuzhichao\IpLocationZh\Ip;
 use App\Models\AppUser;
 use App\Models\AppCategory;
@@ -40,10 +41,16 @@ class IndexService
 	 */
 	public static function getCategory()
 	{
-		$appCategory = new AppCategory;
-		$data = $appCategory->getCategory();
-		$result = self::makeCategoryTree($data);
-		return $result;
+		$redis = Redis::get('categoryData');
+		if ($redis==NULL) {
+			$appCategory = new AppCategory;
+			$data = $appCategory->getCategory();
+			$value = self::makeCategoryTree($data);
+			Redis::set('categoryData',serialize($value));
+			$redis = Redis::get('categoryData');
+		}
+		
+		return unserialize($redis);
 	}
 
 	/**
