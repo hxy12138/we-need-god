@@ -58,13 +58,22 @@ class UserController extends Controller
 				return redirect("/prompt")->with(['message'=>$result,'url' =>'/register', 'jumpTime'=>3,'status'=>'error']);
 			}
 			if ($result) {
-				return redirect("/prompt")->with(['message'=>'ok','url' =>'/login', 'jumpTime'=>3,'status'=>'success']);
+				return redirect("/prompt")->with(['message'=>'ok','url' =>'/index', 'jumpTime'=>3,'status'=>'success']);
 			}
 
 			return redirect("/prompt")->with(['message'=>'失败','url' =>'/register', 'jumpTime'=>3,'status'=>'error']);
         }
 
         return 'Incorrect!';
+	}
+
+	/*
+	* 退出登陆
+	*/
+	public function userLoginOut()
+	{
+		UserService::delUserLandingStatus();
+		return redirect("/index");
 	}
 
 	/*
