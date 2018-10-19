@@ -42,7 +42,7 @@ class IndexService
 	public static function getCategory()
 	{
 		$redis = Redis::get('categoryData');
-		if ($redis==NULL) {
+		if (!$redis) {
 			$appCategory = new AppCategory;
 			$data = $appCategory->getCategory();
 			$value = self::makeCategoryTree($data);

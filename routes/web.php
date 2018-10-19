@@ -12,7 +12,7 @@
 */
 
 //5255
-// 小米模版
+// 小米商城
  Route::get('/testplus','IndexController@test');
  Route::get('/', 'IndexController@showIndex');
  Route::get('/index', 'IndexController@showIndex');
@@ -28,3 +28,18 @@
  Route::get('/carte', 'CarteController@showCarte');
 
  Route::any('/prompt','PromptController@index');
+
+ // 后台
+
+Route::get('/admin/login', 'BackendLoginController@showLogin');
+Route::post('/admin/logindo', 'BackendLoginController@loginDo');
+
+Route::middleware(['AdminLogin'])->group(function(){
+	Route::get('/admin/home', 'Backend\AdminController@showIndex');
+	Route::get('/admin/menu', 'Backend\AdminController@showMenuList');
+	Route::get('/admin/userlist', 'Backend\AdminController@showUserList');
+	Route::post('/admin/loginout', 'BackendLoginController@adminLoginout');
+	Route::post('/admin/adduserdo', 'Backend\AdminController@doAddUser');
+	Route::get('/admin/adduser', 'Backend\AdminController@showAddUser');
+	Route::get('/admin/userstatus', 'Backend\AdminController@userStatus');
+});
