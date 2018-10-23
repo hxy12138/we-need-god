@@ -9,7 +9,6 @@ use App\Services\BackendService;
 
 class AdminController extends Controller
 {
-
     /*
     * 后台展示
     */
@@ -55,7 +54,7 @@ class AdminController extends Controller
             // dd($arr);
             $BackendService = new BackendService();
             $userinfo = $BackendService->addUser($arr);
-
+            dd($userinfo);
             if ($userinfo) {
                 return redirect("admin/userlist");
             }
@@ -319,6 +318,7 @@ class AdminController extends Controller
         
         return 'Incorrect!';
     }
+    
     /**
      * 管理员删除
      */
@@ -330,7 +330,7 @@ class AdminController extends Controller
         $id = Input::get('id');
         $BackendService = new BackendService();
         $result = $BackendService->delUser($id);
-        
+
         return redirect("admin/userlist");
     }
 }
