@@ -15,6 +15,7 @@ class IndexController extends Controller
 	{
 		$userinfo = IndexService::getSessionByCookie('userinfo');
 		$category = IndexService::getCategory();
+		// dump($category);
 		return view('index.index',['userinfo'=>$userinfo,'category'=>$category]);
 	}
 }
