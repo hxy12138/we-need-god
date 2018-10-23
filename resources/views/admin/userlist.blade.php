@@ -60,10 +60,7 @@
                     ">启用</span>@if($v['is_super']==0)</a>@endif
                     @endif
                   </td>
-                  <td><a href=""><i class="fa btn  fa-refresh"></i></a>&nbsp;&nbsp;
-                    @if($v['is_super']==0)<a href="">@endif<i class="fa fa-trash
-                          @if($v['is_super']==1)disabled @endif
-                      "></i>@if($v['is_super']==0)</a>@endif</td>
+                  <td><a href="{{URL::asset('admin/updateuser?id='.$v['id'])}}"><i class="fa btn  fa-refresh"></i></a></td>
                 </tr>
                 @endforeach
               </tbody></table>

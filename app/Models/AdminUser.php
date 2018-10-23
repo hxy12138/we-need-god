@@ -18,7 +18,7 @@ class AdminUser extends Model
     */
     public function getUserOneForLogin($arr)
     {
-        return DB::select('select * from `app_admin_user` where username = :username and password = :password', $arr);
+        return DB::select('select * from `app_admin_user` where username = :username and password = :password and is_freeze=1', $arr);
     }
 
     /**
@@ -62,6 +62,23 @@ class AdminUser extends Model
     public function chengStatus($arr)
     {
         return $this->where('id', $arr['id'])
-    ->update(['is_freeze' => $arr['status']]);
+        ->update(['is_freeze' => $arr['status']]);
+    }
+
+    /**
+     * 通过id查用户信息
+     */
+    public function getUserOneForId($id)
+    {
+        return $this->where('id',$id)->first()->toArray();
+    }
+
+    /**
+     * 
+     */
+    public function updatauser($arr)
+    {
+        return $this->where('id', $arr['id'])
+        ->update($arr);
     }
 }

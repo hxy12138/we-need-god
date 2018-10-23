@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class AdminUserRole extends Model
 {
@@ -27,10 +28,18 @@ class AdminUserRole extends Model
     }
 
     /**
-     * 上一条添加ID
+     * 添加多条
      */
     public function insertAll($arr)
     {
         return $this->insert($arr);
+    }
+
+    /**
+     * 删除指定adminID的数据
+     */
+    public function deleteSomeOne($arr)
+    {
+        return DB::table('app_admin_user_role')->where($arr)->delete();
     }
 }

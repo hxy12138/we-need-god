@@ -34,12 +34,35 @@
 Route::get('/admin/login', 'BackendLoginController@showLogin');
 Route::post('/admin/logindo', 'BackendLoginController@loginDo');
 
+/**
+ * 走中间件判断是否登录是否有权限
+ */
 Route::middleware(['AdminLogin'])->group(function(){
+	Route::get('/admin', 'Backend\AdminController@showIndex');
 	Route::get('/admin/home', 'Backend\AdminController@showIndex');
-	Route::get('/admin/menu', 'Backend\AdminController@showMenuList');
-	Route::get('/admin/userlist', 'Backend\AdminController@showUserList');
 	Route::post('/admin/loginout', 'BackendLoginController@adminLoginout');
-	Route::post('/admin/adduserdo', 'Backend\AdminController@doAddUser');
-	Route::get('/admin/adduser', 'Backend\AdminController@showAddUser');
-	Route::get('/admin/userstatus', 'Backend\AdminController@userStatus');
+
+	//权限管理
+	Route::get('/admin/menu', 'Backend\AdminController@showMenuList');//展示权限列表
+	Route::get('/admin/addmenu', 'Backend\AdminController@showAddMenu');//展示添加权限页
+	Route::post('/admin/addmenudo', 'Backend\AdminController@doAddMenu');//处理添加权限
+	Route::get('/admin/updatemenu', 'Backend\AdminController@showUpdateMenu');//展示修改权限页
+	Route::post('/admin/updatemenudo', 'Backend\AdminController@doUpdateMenu');//处理修改权限
+	
+	//用户管理
+	Route::get('/admin/userlist', 'Backend\AdminController@showUserList');//展示管理员列表
+	Route::get('/admin/userstatus', 'Backend\AdminController@userStatus');//处理管理员冻结、解冻
+	Route::post('/admin/adduserdo', 'Backend\AdminController@doAddUser');//展示添加管理员
+	Route::get('/admin/adduser', 'Backend\AdminController@showAddUser');//处理添加管理员
+	Route::get('/admin/updateuser', 'Backend\AdminController@showUpdateUser');//展示修改管理员
+	Route::post('/admin/updateuserdo', 'Backend\AdminController@doUpdateUser');//处理修改管理员
+	Route::get('/admin/delmenu', 'Backend\AdminController@delMenu');//删除管理员
+
+	//角色管理
+	Route::get('/admin/addrole', 'Backend\AdminController@showAddRole');//展示添加角色页
+	Route::post('/admin/addroledo', 'Backend\AdminController@doAddRole');//处理添加角色
+	Route::get('/admin/updatarolepower', 'Backend\AdminController@showUpdataRolePower');//展示修改角色页
+	Route::post('/admin/roleupdatedo', 'Backend\AdminController@doUpdataRolePower');//处理修改角色
+	Route::get('/admin/deletrolepower', 'Backend\AdminController@deleteRolePower');//处理角色删除
+	Route::get('/admin/rolelist', 'Backend\AdminController@showRoleList');//展示角色列表
 });
