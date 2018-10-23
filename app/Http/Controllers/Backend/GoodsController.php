@@ -12,7 +12,7 @@ class GoodsController extends Controller
     /*
     * 后台展示
     */
-    public function showIndex()
+    public function showGoodsList()
     {
         $BackendService = new BackendService();
         $userinfo = $BackendService->getSession();
