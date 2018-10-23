@@ -97,9 +97,10 @@ class UserService
  		$validator = Validator::make(['captcha'=>$arr['captcha']], $rules,$messages);
  		if ($validator->fails()){
 			$errors = $validator->errors();
-			return $errors->all();
+			
 			if ($errors->has('captcha')) {
-				return $errors->first('captcha');
+				$err = $errors->first('captcha');
+				return $err[0];
 			}
 		}
 		$result = AppUser::getUserOneForLogin($arr);

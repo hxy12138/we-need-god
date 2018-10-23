@@ -178,6 +178,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         Mews\Captcha\CaptchaServiceProvider::class,
         \hisorange\BrowserDetect\ServiceProvider::class,
+        JeroenNoten\LaravelAdminLte\ServiceProvider::class,
 
     ],
 

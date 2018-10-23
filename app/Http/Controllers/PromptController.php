@@ -28,6 +28,6 @@ class PromptController extends Controller
 			];
 		}
 		//显示模板及数据
-		return view('/public/prompt',compact('data'));
+		return view('public/Prompt',compact('data'));
 	}
 }
