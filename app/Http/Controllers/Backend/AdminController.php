@@ -17,7 +17,7 @@ class AdminController extends Controller
         $BackendService = new BackendService();
         $userinfo = $BackendService->getSession();
 
-        return view('admin.index',['userinfo' => $userinfo]);
+        return view('admin.Index',['userinfo' => $userinfo]);
     }
 
     /**
