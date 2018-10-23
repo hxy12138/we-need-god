@@ -25,7 +25,7 @@ class BackendService
         $data[':username'] = $arr['email'];
 		$adminuser = new AdminUser();
 		$result = $adminuser->getUserOneForLogin($data);
-		
+
 		return $result;
 	}
 
@@ -471,7 +471,7 @@ class BackendService
 		$flag = true;
 		DB::beginTransaction();
 		try{
-			$adminuser->updataUser($arr);
+			$adminuser->updateUser($arr);
 			if (isset($role)) {
 				$adminuserrole->deleteSomeOne(['admin_id'=>$arr['id']]);
 				$data = [];
@@ -541,5 +541,17 @@ class BackendService
 		}
 
 		return $flag;
+	}
+
+	/**
+	 * 假删除管理员
+	 */
+	public function delUser($id)
+	{
+        if ($id=='1') {
+            return false;
+        }
+		$adminuser = new AdminUser();
+		return $adminuser->delUser(['id'=>$id,'is_del'=>'1']);
 	}
 }

@@ -60,7 +60,10 @@
                     ">启用</span>@if($v['is_super']==0)</a>@endif
                     @endif
                   </td>
-                  <td><a href="{{URL::asset('admin/updateuser?id='.$v['id'])}}"><i class="fa btn  fa-refresh"></i></a></td>
+                  <td><a href="{{URL::asset('admin/updateuser?id='.$v['id'])}}"><i class="fa btn  fa-refresh"></i></a>
+                      
+                    <a href="{{URL::asset('admin/deluser?id='.$v['id'])}}" class="btn"><i class="fa fa-trash"></i></a>
+                  </td>
                 </tr>
                 @endforeach
               </tbody></table>

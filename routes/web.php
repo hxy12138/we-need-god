@@ -48,6 +48,7 @@ Route::middleware(['AdminLogin'])->group(function(){
 	Route::post('/admin/addmenudo', 'Backend\AdminController@doAddMenu');//处理添加权限
 	Route::get('/admin/updatemenu', 'Backend\AdminController@showUpdateMenu');//展示修改权限页
 	Route::post('/admin/updatemenudo', 'Backend\AdminController@doUpdateMenu');//处理修改权限
+	Route::get('/admin/delmenu', 'Backend\AdminController@delMenu');//删除权限
 	
 	//用户管理
 	Route::get('/admin/userlist', 'Backend\AdminController@showUserList');//展示管理员列表
@@ -56,7 +57,7 @@ Route::middleware(['AdminLogin'])->group(function(){
 	Route::get('/admin/adduser', 'Backend\AdminController@showAddUser');//处理添加管理员
 	Route::get('/admin/updateuser', 'Backend\AdminController@showUpdateUser');//展示修改管理员
 	Route::post('/admin/updateuserdo', 'Backend\AdminController@doUpdateUser');//处理修改管理员
-	Route::get('/admin/delmenu', 'Backend\AdminController@delMenu');//删除管理员
+	Route::get('/admin/deluser', 'Backend\AdminController@delUser');//删除管理员
 
 	//角色管理
 	Route::get('/admin/addrole', 'Backend\AdminController@showAddRole');//展示添加角色页

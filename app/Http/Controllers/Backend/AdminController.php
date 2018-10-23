@@ -55,7 +55,7 @@ class AdminController extends Controller
             // dd($arr);
             $BackendService = new BackendService();
             $userinfo = $BackendService->addUser($arr);
-            
+
             if ($userinfo) {
                 return redirect("admin/userlist");
             }
@@ -318,5 +318,19 @@ class AdminController extends Controller
         }
         
         return 'Incorrect!';
+    }
+    /**
+     * 管理员删除
+     */
+    public function delUser()
+    {
+        if (Input::get('id')==null) {
+            return redirect("admin/userlist");
+        }
+        $id = Input::get('id');
+        $BackendService = new BackendService();
+        $result = $BackendService->delUser($id);
+        
+        return redirect("admin/userlist");
     }
 }

@@ -18,7 +18,7 @@ class AdminUser extends Model
     */
     public function getUserOneForLogin($arr)
     {
-        return DB::select('select * from `app_admin_user` where username = :username and password = :password and is_freeze=1', $arr);
+        return DB::select('select * from `app_admin_user` where username = :username and password = :password and is_freeze=1 and is_del=0', $arr);
     }
 
     /**
@@ -29,6 +29,7 @@ class AdminUser extends Model
         return DB::table('app_admin_user')->where([
             ['id', '=', $id],
             ['is_freeze', '=', '1'],
+            ['is_del', '=', '0'],
         ])->select('id','username','name','created_at','updated_at')->first();
     }
 
@@ -37,7 +38,7 @@ class AdminUser extends Model
      */
     public function getUser()
     {
-        return self::select("id","username","name","is_freeze","is_super","created_at","updated_at")->get()->toArray();
+        return self::where(['is_del'=>'0'])->select("id","username","name","is_freeze","is_super","created_at","updated_at")->get()->toArray();
     }
 
     /**
@@ -74,9 +75,18 @@ class AdminUser extends Model
     }
 
     /**
-     * 
+     * 修改用户信息
      */
-    public function updatauser($arr)
+    public function updateUser($arr)
+    {
+        return $this->where('id', $arr['id'])
+        ->update($arr);
+    }
+
+    /**
+     * 假删除
+     */
+    public function delUser($arr)
     {
         return $this->where('id', $arr['id'])
         ->update($arr);
